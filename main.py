@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import os
 
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, r2_score
@@ -89,22 +90,39 @@ results = pd.DataFrame({
 print("\nModel Comparison:\n")
 print(results)
 
+# Create output directory if it doesn't exist
+output_dir = "output"
+if not os.path.exists(output_dir):
+    os.makedirs(output_dir)
+
+# Save results to CSV
+results.to_csv(os.path.join(output_dir, "model_comparison_results.csv"), index=False)
+print(f"\n✓ Results saved to {output_dir}/model_comparison_results.csv")
+
+
 # ============================================
 # GRAPHICAL REPRESENTATION
 # ============================================
 
 # Classification comparison
-plt.figure()
+plt.figure(figsize=(10, 5))
 classification_results = results.dropna(subset=["Accuracy"])
 classification_results.set_index("Model")[["Accuracy", "F1 Score"]].plot(kind="bar")
 plt.title("Classification Model Comparison")
 plt.ylabel("Score")
-plt.xticks(rotation=0)
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.savefig(os.path.join(output_dir, "classification_comparison.png"), dpi=300, bbox_inches='tight')
+print(f"✓ Classification plot saved to {output_dir}/classification_comparison.png")
 plt.show()
 
 # Regression comparison
-plt.figure()
+plt.figure(figsize=(8, 5))
 plt.bar(["Linear Regression"], [r2])
 plt.title("Regression Model R2 Score")
 plt.ylabel("R2 Score")
+plt.ylim([0, 1])
+plt.tight_layout()
+plt.savefig(os.path.join(output_dir, "regression_comparison.png"), dpi=300, bbox_inches='tight')
+print(f"✓ Regression plot saved to {output_dir}/regression_comparison.png")
 plt.show()
